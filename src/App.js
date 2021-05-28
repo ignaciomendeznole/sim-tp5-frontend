@@ -5,24 +5,26 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [simulacionData, setSimulacionData] = useState({
-    numSimulaciones: "",
-    relojDesde: "",
-    relojHasta: "",
-    probabilidadComprar: "",
-    probabilidadReparar: "",
-    probabilidadRetirar: "",
-    repUniformeA: "",
-    repUniformeB: "",
-    ventaUniformeA: "",
-    ventaUniformeB: "",
-    llegada_clienteA: "",
-    llegada_clienteB: "",
+    ultimoReloj: null,
+    relojDesde: null,
+    relojHasta: null,
+    probabilidadComprar: null,
+    probabilidadReparar: null,
+    probabilidadRetirar: null,
+    repUniformeA: null,
+    repUniformeB: null,
+    ventaUniformeA: null,
+    ventaUniformeB: null,
+    llegadaClienteA: null,
+    llegadaClienteB: null,
   });
 
-  const [validForm, setValidForm] = useState(true);
+  const [simulacion, setSimulacion] = useState(null);
+
+  const [validForm, setValidForm] = useState(false);
 
   const {
-    numSimulaciones,
+    ultimoReloj,
     relojDesde,
     relojHasta,
     probabilidadComprar,
@@ -32,31 +34,64 @@ function App() {
     repUniformeB,
     ventaUniformeA,
     ventaUniformeB,
-    llegada_clienteA,
-    llegada_clienteB,
+    llegadaClienteA,
+    llegadaClienteB,
   } = simulacionData;
 
   const updateForm = (e) => {
-    setSimulacionData({
-      ...simulacionData,
-      [e.target.name]: e.target.value,
-    });
+    let value = parseInt(e.target.value);
+    if (isNaN(value)) {
+      setSimulacionData({
+        ...simulacionData,
+        [e.target.name]: "",
+      });
+    } else {
+      if (value) {
+        setSimulacionData({
+          ...simulacionData,
+          [e.target.name]: value,
+        });
+      }
+    }
+  };
+
+  const fetchInformation = async () => {
+    const BASE_URL = "http://172.105.159.186:5001";
+    try {
+      const response = await axios.post(`${BASE_URL}/api/run-simulation`, {
+        ultimoReloj,
+        relojDesde,
+        relojHasta,
+        probabilidadComprar: probabilidadComprar / 100,
+        probabilidadReparar: probabilidadReparar / 100,
+        probabilidadRetirar: probabilidadRetirar / 100,
+        repUniformeA,
+        repUniformeB,
+        ventaUniformeA,
+        ventaUniformeB,
+        llegadaClienteA,
+        llegadaClienteB,
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const checkForm = () => {
     if (
-      numSimulaciones === "" ||
-      relojDesde === "" ||
-      relojHasta === "" ||
-      probabilidadComprar === "" ||
-      probabilidadReparar === "" ||
-      probabilidadRetirar === "" ||
-      repUniformeA === "" ||
-      repUniformeB === "" ||
-      ventaUniformeA === "" ||
-      ventaUniformeB === "" ||
-      llegada_clienteA === "" ||
-      llegada_clienteB === ""
+      ultimoReloj === null ||
+      relojDesde === null ||
+      relojHasta === null ||
+      probabilidadComprar === null ||
+      probabilidadReparar === null ||
+      probabilidadRetirar === null ||
+      repUniformeA === null ||
+      repUniformeB === null ||
+      ventaUniformeA === null ||
+      ventaUniformeB === null ||
+      llegadaClienteA === null ||
+      llegadaClienteB === null
     ) {
       setValidForm(false);
     } else {
@@ -64,8 +99,14 @@ function App() {
     }
   };
 
-  const startSimulation = () => {
+  const startSimulation = (e) => {
+    e.preventDefault();
     checkForm();
+    if (!validForm) {
+      return;
+    } else {
+      fetchInformation();
+    }
   };
 
   return (
@@ -91,8 +132,8 @@ function App() {
                   type='text'
                   placeholder='Ingresar número de simulaciones'
                   className='simulation-input'
-                  value={numSimulaciones}
-                  name='numSimulaciones'
+                  value={ultimoReloj}
+                  name='ultimoReloj'
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -147,15 +188,15 @@ function App() {
                     Distribución Uniforme entre{" "}
                     <input
                       type='text'
-                      value={llegada_clienteA}
-                      name='llegada_clienteA'
+                      value={llegadaClienteA}
+                      name='llegadaClienteA'
                       onChange={updateForm}
                     ></input>{" "}
                     y{" "}
                     <input
                       type='text'
-                      value={llegada_clienteB}
-                      name='llegada_clienteB'
+                      value={llegadaClienteB}
+                      name='llegadaClienteB'
                       onChange={updateForm}
                     />
                   </td>

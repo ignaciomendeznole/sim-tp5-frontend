@@ -13,7 +13,7 @@ function App() {
     relojHasta: 300,
     probabilidadComprar: 45,
     probabilidadReparar: 25,
-    probabilidadRetirar: 3,
+    probabilidadRetirar: 30,
     repUniformeA: 18,
     repUniformeB: 22,
     ventaUniformeA: 6,

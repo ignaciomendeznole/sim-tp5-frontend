@@ -20,6 +20,7 @@ function App() {
     ventaUniformeB: 10,
     llegadaClienteA: 13,
     llegadaClienteB: 17,
+    initTime: 115,
   });
 
   const [simulacion, setSimulacion] = useState(null);
@@ -37,9 +38,10 @@ function App() {
   };
 
   const fetchInformation = async () => {
-    const BASE_URL = "http://172.105.159.186:5001";
+    const BASE_URL = "http://127.0.0.1:5000";
     try {
       let {
+        initTime,
         ultimoReloj,
         relojDesde,
         relojHasta,
@@ -54,9 +56,11 @@ function App() {
         llegadaClienteB,
       } = simulacionData;
 
+      console.log(simulacionData);
       const response = await axios.post(`${BASE_URL}/api/run-simulation`, {
         ultimoReloj,
         relojDesde,
+        initTime,
         relojHasta,
         probabilidadComprar: probabilidadComprar / 100,
         probabilidadReparar: probabilidadReparar / 100,
@@ -70,6 +74,7 @@ function App() {
       });
 
       console.log(response.data);
+
       setSimulacion(response.data);
     } catch (error) {
       console.log(error);
@@ -138,6 +143,21 @@ function App() {
         )}
 
         <div className="input-fields">
+          <Row>
+            <Form>
+              <Form.Group>
+                <Form.Label>Inicio de la simulacion</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresar inicio de la simulacion"
+                  className="simulation-input"
+                  value={simulacionData.initTime}
+                  name="initTime"
+                  onChange={updateForm}
+                />
+              </Form.Group>
+            </Form>
+          </Row>
           <Row>
             <Form>
               <Form.Group>
@@ -323,18 +343,34 @@ function App() {
         >
           SIMULAR
         </Button>
-        {/* <Row>
-          <Col>
-            <h2>Otros costos:</h2>
-            <h3>Almacenamiento (KM): $3 por dia por unidad</h3>
-            <h3>Ruptura (KS): $4 por dia por unidad</h3>
-          </Col>
-        </Row> */}
+
         <br />
+        <Row style={{ marginLeft: "5px" }}>
+            {simulacion !== null ? (
+              <h2>
+                Porcentaje de ocupacion del relojero:{" "}
+                {(simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
+                  simulacion[simulacion.length - 1].reloj) *
+                  100}
+              </h2>
+            ) : null}
+          </Row>
+
+          <Row style={{ marginLeft: "5px" }}>
+            {simulacion !== null ? (
+              <h2>
+                Porcentaje de ocupacion del ayudante:{" "}
+                {(simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
+                  simulacion[simulacion.length - 1].reloj) *
+                  100}
+              </h2>
+            ) : null}
+          </Row>
         <Row>
           <Col>
             <h1>SIMULACIÓN</h1>
           </Col>
+          
           <Table striped bordered hover variant="dark">
             <thead>
               <tr>
@@ -414,16 +450,18 @@ function App() {
                                 .then(() => {
                                   return swalClientes.fire(
                                     <>
-                                      {simulation.clientes.map(
-                                        (cliente, index) => {
-                                          return (
-                                            <p style={{ fontSize: "20px" }}>
-                                              Cliente: {cliente.id} Estado:{" "}
-                                              {cliente.state.description}
-                                            </p>
-                                          );
-                                        }
-                                      )}
+                                      {simulacion.clientes
+                                        ? simulation.clientes.map(
+                                            (cliente, index) => {
+                                              return (
+                                                <p style={{ fontSize: "20px" }}>
+                                                  Cliente: {cliente.id} Estado:{" "}
+                                                  {cliente.state.description}
+                                                </p>
+                                              );
+                                            }
+                                          )
+                                        : null}
                                     </>
                                   );
                                 });

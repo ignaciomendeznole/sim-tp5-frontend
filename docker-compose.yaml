@@ -1,7 +1,7 @@
 version: '3'
 services:
   frontend:
-    image: "tp4-sim_frontend"
+    image: "tp5-sim_frontend"
     ports:
       - "41312:80"
 

@@ -11,9 +11,9 @@ function App() {
     ultimoReloj: 1000,
     relojDesde: 115,
     relojHasta: 300,
-    probabilidadComprar: 0.45,
-    probabilidadReparar: 0.25,
-    probabilidadRetirar: 0.3,
+    probabilidadComprar: 45,
+    probabilidadReparar: 25,
+    probabilidadRetirar: 3,
     repUniformeA: 18,
     repUniformeB: 22,
     ventaUniformeA: 6,
@@ -346,31 +346,31 @@ function App() {
 
         <br />
         <Row style={{ marginLeft: "5px" }}>
-            {simulacion !== null ? (
-              <h2>
-                Porcentaje de ocupacion del relojero:{" "}
-                {(simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
-                  simulacion[simulacion.length - 1].reloj) *
-                  100}
-              </h2>
-            ) : null}
-          </Row>
+          {simulacion !== null ? (
+            <h2>
+              Porcentaje de ocupacion del relojero:{" "}
+              {(simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
+                simulacion[simulacion.length - 1].reloj) *
+                100}
+            </h2>
+          ) : null}
+        </Row>
 
-          <Row style={{ marginLeft: "5px" }}>
-            {simulacion !== null ? (
-              <h2>
-                Porcentaje de ocupacion del ayudante:{" "}
-                {(simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
-                  simulacion[simulacion.length - 1].reloj) *
-                  100}
-              </h2>
-            ) : null}
-          </Row>
+        <Row style={{ marginLeft: "5px" }}>
+          {simulacion !== null ? (
+            <h2>
+              Porcentaje de ocupacion del ayudante:{" "}
+              {(simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
+                simulacion[simulacion.length - 1].reloj) *
+                100}
+            </h2>
+          ) : null}
+        </Row>
         <Row>
           <Col>
             <h1>SIMULACIÓN</h1>
           </Col>
-          
+
           <Table striped bordered hover variant="dark">
             <thead>
               <tr>

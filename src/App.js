@@ -113,31 +113,31 @@ function App() {
       return { validForm: false, errorMessage: "Campos invalidos " };
     }
 
-    if (relojDesde > relojHasta) {
+    if (Number.parseFloat(relojDesde) > Number.parseFloat(relojHasta)) {
       return {
         validForm: false,
         errorMessage: "El campo mostrar reloj desde debe ser mayor al hasta",
       };
     }
 
-    if (initTime > ultimoReloj)
+    if (Number.parseFloat(initTime) > Number.parseFloat(ultimoReloj))
       return {
         validForm: false,
         errorMessage: "El inicio de la simulacion debe ser menor que el fin",
       };
 
-    if (repUniformeA > repUniformeB)
+    if (Number.parseFloat(repUniformeA) > Number.parseFloat(repUniformeB))
       return {
         validForm: false,
         errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
       };
 
-    if (ventaUniformeA > ventaUniformeB)
+    if (Number.parseFloat(ventaUniformeA) > Number.parseFloat(ventaUniformeB))
       return {
         validForm: false,
         errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
       };
-    if (llegadaClienteA > llegadaClienteB)
+    if (Number.parseFloat(llegadaClienteA) > Number.parseFloat(llegadaClienteB))
       return {
         validForm: false,
         errorMessage: "En las distribuciones uniformes, A debe ser menor a B",

@@ -25,12 +25,9 @@ function App() {
 
   const [simulacion, setSimulacion] = useState(null);
 
-  const [validForm, setValidForm] = useState(false);
-
   const swalClientes = withReactContent(Swal);
 
   const updateForm = (e) => {
-    console.log(e.target.value);
     setSimulacionData({
       ...simulacionData,
       [e.target.name]: e.target.value,
@@ -95,37 +92,78 @@ function App() {
       ventaUniformeB,
       llegadaClienteA,
       llegadaClienteB,
+      initTime,
     } = simulacionData;
 
     if (
-      ultimoReloj === null ||
-      relojDesde === null ||
-      relojHasta === null ||
-      probabilidadComprar === null ||
-      probabilidadReparar === null ||
-      probabilidadRetirar === null ||
-      repUniformeA === null ||
-      repUniformeB === null ||
-      ventaUniformeA === null ||
-      ventaUniformeB === null ||
-      llegadaClienteA === null ||
-      llegadaClienteB === null
+      isNaN(Number.parseFloat(ultimoReloj)) ||
+      isNaN(Number.parseFloat(relojDesde)) ||
+      isNaN(Number.parseFloat(relojHasta)) ||
+      isNaN(Number.parseFloat(probabilidadComprar)) ||
+      isNaN(Number.parseFloat(probabilidadReparar)) ||
+      isNaN(Number.parseFloat(probabilidadRetirar)) ||
+      isNaN(Number.parseFloat(repUniformeA)) ||
+      isNaN(Number.parseFloat(repUniformeB)) ||
+      isNaN(Number.parseFloat(ventaUniformeA)) ||
+      isNaN(Number.parseFloat(ventaUniformeB)) ||
+      isNaN(Number.parseFloat(llegadaClienteA)) ||
+      isNaN(Number.parseFloat(llegadaClienteB)) ||
+      isNaN(Number.parseFloat(initTime))
     ) {
-      setValidForm(false);
-    } else {
-      setValidForm(true);
+      return { validForm: false, errorMessage: "Campos invalidos " };
     }
+
+    if (relojDesde > relojHasta) {
+      return {
+        validForm: false,
+        errorMessage: "El campo mostrar reloj desde debe ser mayor al hasta",
+      };
+    }
+
+    if (initTime > ultimoReloj)
+      return {
+        validForm: false,
+        errorMessage: "El inicio de la simulacion debe ser menor que el fin",
+      };
+
+    if (repUniformeA > repUniformeB)
+      return {
+        validForm: false,
+        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
+      };
+
+    if (ventaUniformeA > ventaUniformeB)
+      return {
+        validForm: false,
+        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
+      };
+    if (llegadaClienteA > llegadaClienteB)
+      return {
+        validForm: false,
+        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
+      };
+
+    if (
+      Number.parseFloat(probabilidadComprar) +
+        Number.parseFloat(probabilidadReparar) +
+        Number.parseFloat(probabilidadRetirar) !==
+      100
+    ) {
+      return {
+        validForm: false,
+        errorMessage: "La suma de las probabilidades debe ser 100%",
+      };
+    }
+
+    return { validForm: true };
   };
 
   const startSimulation = (e) => {
-    return fetchInformation();
-    e.preventDefault();
-    checkForm();
+    let { validForm, errorMessage } = checkForm();
     if (!validForm) {
-      return;
-    } else {
-      fetchInformation();
+      return alert(`Error: ${errorMessage}`);
     }
+    return fetchInformation();
   };
 
   return (
@@ -136,17 +174,15 @@ function App() {
             <h1>Simulación de Modelos Dinámicos: Colas</h1>
           </Col>
         </Row>
-        {validForm ? null : (
-          <p style={{ color: "red" }}>
-            ¡Debes completar todos los campos para comenzar la simulación!
-          </p>
-        )}
+        <p style={{ color: "red" }}>
+          ¡Debes completar todos los campos para comenzar la simulación!
+        </p>
 
         <div className="input-fields">
           <Row>
             <Form>
               <Form.Group>
-                <Form.Label>Inicio de la simulacion</Form.Label>
+                <Form.Label>Reloj de inicialización (minutos)</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar inicio de la simulacion"
@@ -161,7 +197,7 @@ function App() {
           <Row>
             <Form>
               <Form.Group>
-                <Form.Label>Fin del reloj</Form.Label>
+                <Form.Label>Fin de la simulación (minutos)</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar número de simulaciones"
@@ -176,7 +212,7 @@ function App() {
           <Row>
             <Form>
               <Form.Group>
-                <Form.Label>Mostrar Reloj desde</Form.Label>
+                <Form.Label>Mostrar Reloj desde (minutos):</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar Reloj de inicio"
@@ -191,7 +227,7 @@ function App() {
           <Row>
             <Form>
               <Form.Group>
-                <Form.Label>Mostrar Reloj hasta</Form.Label>
+                <Form.Label>Mostrar Reloj hasta (minutos):</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar Reloj de fin"
@@ -233,6 +269,7 @@ function App() {
                       name="llegadaClienteB"
                       onChange={updateForm}
                     />
+                    minutos
                   </td>
                 </tr>
                 <tr>
@@ -252,6 +289,7 @@ function App() {
                       name="ventaUniformeB"
                       onChange={updateForm}
                     />
+                    minutos
                   </td>
                 </tr>
                 <tr>
@@ -271,6 +309,7 @@ function App() {
                       name="repUniformeB"
                       onChange={updateForm}
                     />
+                    minutos
                   </td>
                 </tr>
                 <tr>
@@ -435,40 +474,47 @@ function App() {
                         <td>{simulation.relojesRetirar}</td>
                         <td>{simulation.proximoEvento}</td>
                         <td>
-                          <Button
-                            onClick={() => {
-                              swalClientes
-                                .fire({
-                                  title: <p>Clientes</p>,
-                                  footer: "Copyright 2018",
-                                  didOpen: () => {
-                                    // `MySwal` is a subclass of `Swal`
-                                    //   with all the same instance & static methods
-                                    swalClientes.clickConfirm();
-                                  },
-                                })
-                                .then(() => {
-                                  return swalClientes.fire(
-                                    <>
-                                      {simulacion.clientes
-                                        ? simulation.clientes.map(
-                                            (cliente, index) => {
-                                              return (
-                                                <p style={{ fontSize: "20px" }}>
-                                                  Cliente: {cliente.id} Estado:{" "}
-                                                  {cliente.state.description}
-                                                </p>
-                                              );
-                                            }
-                                          )
-                                        : null}
-                                    </>
-                                  );
-                                });
-                            }}
-                          >
-                            Ver clientes
-                          </Button>
+                          {simulation.clientes.length > 0 ? (
+                            <Button
+                              onClick={() => {
+                                swalClientes
+                                  .fire({
+                                    title: <p>Clientes</p>,
+                                    footer: "Copyright 2018",
+                                    didOpen: () => {
+                                      // `MySwal` is a subclass of `Swal`
+                                      //   with all the same instance & static methods
+                                      swalClientes.clickConfirm();
+                                    },
+                                  })
+                                  .then(() => {
+                                    return swalClientes.fire(
+                                      <>
+                                        {simulation.clientes
+                                          ? simulation.clientes.map(
+                                              (cliente, index) => {
+                                                return (
+                                                  <p
+                                                    style={{ fontSize: "20px" }}
+                                                  >
+                                                    Cliente: {cliente.id}{" "}
+                                                    Estado:{" "}
+                                                    {cliente.state.description}
+                                                  </p>
+                                                );
+                                              }
+                                            )
+                                          : null}
+                                      </>
+                                    );
+                                  });
+                              }}
+                            >
+                              Ver clientes
+                            </Button>
+                          ) : (
+                            <p>Ningun cliente</p>
+                          )}
                         </td>
                       </tr>
                     );

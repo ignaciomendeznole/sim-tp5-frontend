@@ -3,9 +3,6 @@ import { Form, Button, Container, Row, Col, Table } from "react-bootstrap";
 import axios from "axios";
 import { useState } from "react";
 
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-
 function App() {
   const [simulacionData, setSimulacionData] = useState({
     ultimoReloj: 1000,
@@ -23,9 +20,10 @@ function App() {
     initTime: 115,
   });
 
-  const [simulacion, setSimulacion] = useState(null);
+  const [cantClientesUnicos, setCantClientesUnicos] = useState(0);
+  const [setClientes, setSetClientes] = useState(new Set());
 
-  const swalClientes = withReactContent(Swal);
+  const [simulacion, setSimulacion] = useState(null);
 
   const updateForm = (e) => {
     setSimulacionData({
@@ -34,8 +32,19 @@ function App() {
     });
   };
 
+  const mapClients = (simulationData) => {
+    const clientesSet = new Set();
+    simulationData.forEach((simulation) => {
+      simulation.clientes.forEach((cliente) => {
+        clientesSet.add(cliente.id);
+      });
+    });
+    setCantClientesUnicos(clientesSet.size);
+    setSetClientes(clientesSet);
+  };
+
   const fetchInformation = async () => {
-    const BASE_URL = "http://127.0.0.1:5000";
+    const BASE_URL = "http://172.105.159.186:5000";
     try {
       let {
         initTime,
@@ -71,7 +80,7 @@ function App() {
       });
 
       console.log(response.data);
-
+      mapClients(response.data);
       setSimulacion(response.data);
     } catch (error) {
       console.log(error);
@@ -374,6 +383,11 @@ function App() {
           </Col>
         </Row>
         <br />
+        <h2>Estados</h2>
+        <p>SAR: Siendo atendido retiro</p>
+        <p>SAE: Siendo atendido entrega</p>
+        <p>SAC: Siendo atendido compra</p>
+        <p>EEA: En espera atencion</p>
 
         <Button
           variant="primary"
@@ -420,6 +434,8 @@ function App() {
                 <th colSpan={5}>AYUDANTE</th>
                 <th colSpan={4}>RELOJERO</th>
                 <th colSpan={1}>TIENDA</th>
+                <th colSpan={1}></th>
+                <th colSpan={cantClientesUnicos}>CLIENTES</th>
               </tr>
               <tr>
                 <th>Número Simulación</th>
@@ -443,7 +459,9 @@ function App() {
                 <th>Tiempo de Ocupación</th>
                 <th>Relojes a Retirar</th>
                 <th>Próximo Evento</th>
-                <th>Clientes</th>
+                {Array.from(setClientes).map((clientId, i) => (
+                  <th key={i}>{clientId}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -473,49 +491,17 @@ function App() {
                         <td>{simulation.relojero.tiempoOcupacion}</td>
                         <td>{simulation.relojesRetirar}</td>
                         <td>{simulation.proximoEvento}</td>
-                        <td>
-                          {simulation.clientes.length > 0 ? (
-                            <Button
-                              onClick={() => {
-                                swalClientes
-                                  .fire({
-                                    title: <p>Clientes</p>,
-                                    footer: "Copyright 2018",
-                                    didOpen: () => {
-                                      // `MySwal` is a subclass of `Swal`
-                                      //   with all the same instance & static methods
-                                      swalClientes.clickConfirm();
-                                    },
-                                  })
-                                  .then(() => {
-                                    return swalClientes.fire(
-                                      <>
-                                        {simulation.clientes
-                                          ? simulation.clientes.map(
-                                              (cliente, index) => {
-                                                return (
-                                                  <p
-                                                    style={{ fontSize: "20px" }}
-                                                  >
-                                                    Cliente: {cliente.id}{" "}
-                                                    Estado:{" "}
-                                                    {cliente.state.description}
-                                                  </p>
-                                                );
-                                              }
-                                            )
-                                          : null}
-                                      </>
-                                    );
-                                  });
-                              }}
-                            >
-                              Ver clientes
-                            </Button>
-                          ) : (
-                            <p>Ningun cliente</p>
-                          )}
-                        </td>
+                        {Array.from(setClientes).map((clientId, i) => (
+                          <td key={i}>
+                            {simulation.clientes.map((cliente, index) => {
+                              return cliente.id === clientId ? (
+                                <p>
+                                  ID: {cliente.id} Estado: {cliente.state.name}
+                                </p>
+                              ) : null;
+                            })}
+                          </td>
+                        ))}
                       </tr>
                     );
                     //});

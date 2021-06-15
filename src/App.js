@@ -1,13 +1,13 @@
-import "./App.css";
-import { Form, Button, Container, Row, Col, Table } from "react-bootstrap";
-import axios from "axios";
-import { useState } from "react";
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
+import './App.css';
+import { Form, Button, Container, Row, Col, Table } from 'react-bootstrap';
+import axios from 'axios';
+import { useState } from 'react';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 
 function App() {
   const theme = createMuiTheme({
     palette: {
-      type: "dark",
+      type: 'dark',
     },
   });
   const [simulacionData, setSimulacionData] = useState({
@@ -54,7 +54,7 @@ function App() {
   };
 
   const fetchInformation = async () => {
-    const BASE_URL = "http://localhost:5000";
+    const BASE_URL = 'http://localhost:5000';
     try {
       let {
         initTime,
@@ -137,7 +137,7 @@ function App() {
       isNaN(Number.parseFloat(initTime)) ||
       isNaN(Number.parseFloat(integrationStep))
     ) {
-      return { validForm: false, errorMessage: "Campos invalidos " };
+      return { validForm: false, errorMessage: 'Campos invalidos ' };
     }
 
     // if (Number.parseFloat(relojDesde) > Number.parseFloat(relojHasta)) {
@@ -150,24 +150,24 @@ function App() {
     if (Number.parseFloat(initTime) > Number.parseFloat(ultimoReloj))
       return {
         validForm: false,
-        errorMessage: "El inicio de la simulacion debe ser menor que el fin",
+        errorMessage: 'El inicio de la simulacion debe ser menor que el fin',
       };
 
     if (Number.parseFloat(repUniformeA) > Number.parseFloat(repUniformeB))
       return {
         validForm: false,
-        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
+        errorMessage: 'En las distribuciones uniformes, A debe ser menor a B',
       };
 
     if (Number.parseFloat(ventaUniformeA) > Number.parseFloat(ventaUniformeB))
       return {
         validForm: false,
-        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
+        errorMessage: 'En las distribuciones uniformes, A debe ser menor a B',
       };
     if (Number.parseFloat(llegadaClienteA) > Number.parseFloat(llegadaClienteB))
       return {
         validForm: false,
-        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
+        errorMessage: 'En las distribuciones uniformes, A debe ser menor a B',
       };
 
     if (
@@ -178,7 +178,7 @@ function App() {
     ) {
       return {
         validForm: false,
-        errorMessage: "La suma de las probabilidades debe ser 100%",
+        errorMessage: 'La suma de las probabilidades debe ser 100%',
       };
     }
 
@@ -194,28 +194,28 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className='App'>
       <Container fluid>
         <Row>
           <Col>
             <h1>Simulación de Modelos Dinámicos: Colas</h1>
           </Col>
         </Row>
-        <p style={{ color: "red" }}>
+        <p style={{ color: 'red' }}>
           ¡Debes completar todos los campos para comenzar la simulación!
         </p>
 
-        <div className="input-fields">
+        <div className='input-fields'>
           <Row>
             <Form>
               <Form.Group>
                 <Form.Label>Reloj de inicialización (minutos)</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresar inicio de la simulacion"
-                  className="simulation-input"
+                  type='text'
+                  placeholder='Ingresar inicio de la simulacion'
+                  className='simulation-input'
                   value={simulacionData.initTime}
-                  name="initTime"
+                  name='initTime'
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -229,11 +229,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Mostrar Reloj desde (minutos):</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresar Reloj de inicio"
-                  className="simulation-input"
+                  type='text'
+                  placeholder='Ingresar Reloj de inicio'
+                  className='simulation-input'
                   value={simulacionData.relojDesde}
-                  name="relojDesde"
+                  name='relojDesde'
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -244,11 +244,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Fin de la simulación</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresar fin de la simulacion"
-                  className="simulation-input"
+                  type='text'
+                  placeholder='Ingresar fin de la simulacion'
+                  className='simulation-input'
                   value={simulacionData.ultimoReloj}
-                  name="ultimoReloj"
+                  name='ultimoReloj'
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -259,11 +259,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Iteraciones a mostrar:</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresar Reloj de fin"
-                  className="simulation-input"
+                  type='text'
+                  placeholder='Ingresar Reloj de fin'
+                  className='simulation-input'
                   value={simulacionData.relojHasta}
-                  name="relojHasta"
+                  name='relojHasta'
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -274,11 +274,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Constante de reparación de relojes "A"</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresar valor de constante de reparación"
-                  className="simulation-input"
+                  type='text'
+                  placeholder='Ingresar valor de constante de reparación'
+                  className='simulation-input'
                   value={simulacionData.fixSpeedValue}
-                  name="fixSpeedValue"
+                  name='fixSpeedValue'
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -289,11 +289,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Paso de Integración "h"</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresar valor del paso de integración"
-                  className="simulation-input"
+                  type='text'
+                  placeholder='Ingresar valor del paso de integración'
+                  className='simulation-input'
                   value={simulacionData.integrationStep}
-                  name="integrationStep"
+                  name='integrationStep'
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -302,9 +302,9 @@ function App() {
         </div>
 
         <Row>
-          <Col lg="14">
+          <Col lg='14'>
             <h1>Distribuciones</h1>
-            <Table striped bordered hover variant="dark" size="sm">
+            <Table striped bordered hover variant='dark' size='sm'>
               <thead>
                 <tr>
                   <th>Distribuciones</th>
@@ -315,18 +315,18 @@ function App() {
                 <tr>
                   <td>Llegada Clientes</td>
                   <td>
-                    Distribución Uniforme entre{" "}
+                    Distribución Uniforme entre{' '}
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.llegadaClienteA}
-                      name="llegadaClienteA"
+                      name='llegadaClienteA'
                       onChange={updateForm}
-                    ></input>{" "}
-                    y{" "}
+                    ></input>{' '}
+                    y{' '}
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.llegadaClienteB}
-                      name="llegadaClienteB"
+                      name='llegadaClienteB'
                       onChange={updateForm}
                     />
                     minutos
@@ -335,18 +335,18 @@ function App() {
                 <tr>
                   <td>Tiempo de atención (para venta)</td>
                   <td>
-                    Distribución Uniforme entre{" "}
+                    Distribución Uniforme entre{' '}
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.ventaUniformeA}
-                      name="ventaUniformeA"
+                      name='ventaUniformeA'
                       onChange={updateForm}
-                    ></input>{" "}
-                    y{" "}
+                    ></input>{' '}
+                    y{' '}
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.ventaUniformeB}
-                      name="ventaUniformeB"
+                      name='ventaUniformeB'
                       onChange={updateForm}
                     />
                     minutos
@@ -355,18 +355,18 @@ function App() {
                 <tr>
                   <td>Tiempo de reparación de relojes</td>
                   <td>
-                    Distribución Uniforme entre{" "}
+                    Distribución Uniforme entre{' '}
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.repUniformeA}
-                      name="repUniformeA"
+                      name='repUniformeA'
                       onChange={updateForm}
-                    ></input>{" "}
-                    y{" "}
+                    ></input>{' '}
+                    y{' '}
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.repUniformeB}
-                      name="repUniformeB"
+                      name='repUniformeB'
                       onChange={updateForm}
                     />
                     minutos
@@ -380,9 +380,9 @@ function App() {
             </Table>
           </Col>
 
-          <Col xs lg="4">
+          <Col xs lg='4'>
             <h1>Probabilidades</h1>
-            <Table striped bordered hover variant="dark" size="sm">
+            <Table striped bordered hover variant='dark' size='sm'>
               <thead>
                 <tr>
                   <th>Tipo de Atención</th>
@@ -394,12 +394,12 @@ function App() {
                   <td>Comprar</td>
                   <td>
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.probabilidadComprar}
-                      name="probabilidadComprar"
+                      name='probabilidadComprar'
                       onChange={updateForm}
-                      placeholder="Ingrese la probabilidad de que un cliente compre un reloj"
-                    />{" "}
+                      placeholder='Ingrese la probabilidad de que un cliente compre un reloj'
+                    />{' '}
                     %
                   </td>
                 </tr>
@@ -407,12 +407,12 @@ function App() {
                   <td>Reparar</td>
                   <td>
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.probabilidadReparar}
-                      name="probabilidadReparar"
+                      name='probabilidadReparar'
                       onChange={updateForm}
-                      placeholder="Ingrese la probabilidad de que un cliente repare un reloj"
-                    />{" "}
+                      placeholder='Ingrese la probabilidad de que un cliente repare un reloj'
+                    />{' '}
                     %
                   </td>
                 </tr>
@@ -420,12 +420,12 @@ function App() {
                   <td>Retirar relojes</td>
                   <td>
                     <input
-                      type="text"
+                      type='text'
                       value={simulacionData.probabilidadRetirar}
-                      name="probabilidadRetirar"
+                      name='probabilidadRetirar'
                       onChange={updateForm}
-                      placeholder="Ingrese la probabilidad de que un cliente retire un reloj"
-                    />{" "}
+                      placeholder='Ingrese la probabilidad de que un cliente retire un reloj'
+                    />{' '}
                     %
                   </td>
                 </tr>
@@ -441,46 +441,54 @@ function App() {
         <p>EEA: En espera atencion</p>
 
         <Button
-          variant="primary"
-          className="simulate-btn"
+          variant='primary'
+          className='simulate-btn'
           onClick={startSimulation}
         >
           SIMULAR
         </Button>
 
         <br />
-        <Row style={{ marginLeft: "5px" }}>
+        <Row style={{ marginLeft: '5px' }}>
           {simulacion !== null ? (
             <h2>
-              Porcentaje de ocupacion del relojero:{" "}
-              {(simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
-                simulacion[simulacion.length - 1].reloj) *
-                100}
+              Porcentaje de ocupacion del relojero:{' '}
+              {Math.trunc(
+                (simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
+                  simulacion[simulacion.length - 1].reloj) *
+                  100,
+                2
+              )}
             </h2>
           ) : null}
         </Row>
 
-        <Row style={{ marginLeft: "5px" }}>
+        <Row style={{ marginLeft: '5px' }}>
           {simulacion !== null ? (
             <h2>
-              Porcentaje de ocupacion del ayudante:{" "}
-              {(simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
-                simulacion[simulacion.length - 1].reloj) *
-                100}
+              Porcentaje de ocupacion del ayudante:{' '}
+              {
+                (Math.trunc(
+                  (simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
+                    simulacion[simulacion.length - 1].reloj) *
+                    100
+                ),
+                2)
+              }
             </h2>
           ) : null}
         </Row>
-        <Row style={{ marginLeft: "5px" }}>
+        {/* <Row style={{ marginLeft: '5px' }}>
           {simulacion !== null ? (
             <h2>
               Probabilidad de que un cliente vaya a retirar un reloj y todavía
-              no esté listo:{" "}
+              no esté listo:{' '}
               {(simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
                 simulacion[simulacion.length - 1].reloj) *
                 100}
             </h2>
           ) : null}
-        </Row>
+        </Row> */}
         <Row>
           <Col>
             <h1>SIMULACIÓN</h1>
@@ -488,8 +496,8 @@ function App() {
 
           <MuiThemeProvider theme={theme}></MuiThemeProvider>
 
-          <Table striped bordered hover variant="dark">
-            <thead style={{ position: "sticky" }}>
+          <Table striped bordered hover variant='dark'>
+            <thead style={{ position: 'sticky' }}>
               <tr>
                 <th colSpan={3}>EVENTOS</th>
                 <th colSpan={3}>LLEGADA CLIENTE</th>
@@ -542,28 +550,43 @@ function App() {
                         onClick={() => setSelectedRow(i)}
                         style={{
                           backgroundColor:
-                            selectedRow === i ? "darkcyan" : null,
+                            selectedRow === i ? 'darkcyan' : null,
                         }}
                       >
                         <td>{simulation.numeroSimulacion}</td>
                         <td>{simulation.evento}</td>
-                        <td>{simulation.reloj}</td>
-                        <td>{simulation.llegada.random}</td>
-                        <td>{simulation.llegada.tiempoLlegada}</td>
-                        <td>{simulation.llegada.proximaLlegada}</td>
-                        <td>{simulation.atencion.random}</td>
+                        <td>{Math.trunc(simulation.reloj, 2)}</td>
+                        <td>{Math.trunc(simulation.llegada.random, 2)}</td>
+                        <td>
+                          {Math.trunc(simulation.llegada.tiempoLlegada, 2)}
+                        </td>
+                        <td>
+                          {Math.trunc(simulation.llegada.proximaLlegada, 2)}
+                        </td>
+                        <td>{Math.trunc(simulation.atencion.random, 2)}</td>
                         <td>{simulation.atencion.tipo}</td>
-                        <td>{simulation.demora.random}</td>
-                        <td>{simulation.demora.tiempoDemora}</td>
+                        <td>{Math.trunc(simulation.demora.random, 2)}</td>
+                        <td>{Math.trunc(simulation.demora.tiempoDemora, 2)}</td>
                         <td>{simulation.ayudante.estado}</td>
                         <td>{simulation.ayudante.cola}</td>
-                        <td>{simulation.ayudante.finAtencion}</td>
-                        <td>{simulation.ayudante.tiempoOcupacion}</td>
+                        <td>
+                          {Math.trunc(simulation.ayudante.finAtencion, 2)}
+                        </td>
+                        <td>
+                          {Math.trunc(simulation.ayudante.tiempoOcupacion, 2)}
+                        </td>
                         <td>{simulation.ayudante.tipoOcupacion}</td>
+                        <td>{/* RND Complejidad API */}</td>
+                        <td>{/* Complejidad */}</td>
+                        <td>{/* Tiempo de reparación  */}</td>
                         <td>{simulation.relojero.estado}</td>
                         <td>{simulation.relojero.cola}</td>
-                        <td>{simulation.relojero.finAtencion}</td>
-                        <td>{simulation.relojero.tiempoOcupacion}</td>
+                        <td>
+                          {Math.trunc(simulation.relojero.finAtencion, 2)}
+                        </td>
+                        <td>
+                          {Math.trunc(simulation.relojero.tiempoOcupacion, 2)}
+                        </td>
                         <td>{simulation.relojesRetirar}</td>
                         <td>{simulation.proximoEvento}</td>
                         {Array.from(setClientes).map((clientId, i) => (

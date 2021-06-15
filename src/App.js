@@ -481,7 +481,8 @@ function App() {
                 <th colSpan={2}>ATENCIÓN</th>
                 <th colSpan={2}>DEMORA</th>
                 <th colSpan={5}>AYUDANTE</th>
-                <th colSpan={7}>RELOJERO</th>
+                <th colSpan={3}>REPARACIÓN RELOJES</th>
+                <th colSpan={4}>RELOJERO</th>
                 <th colSpan={1}>TIENDA</th>
                 <th colSpan={1}></th>
                 <th colSpan={cantClientesUnicos}>CLIENTES</th>
@@ -502,11 +503,11 @@ function App() {
                 <th>Fin Atención</th>
                 <th>Tiempo de Ocupación</th>
                 <th>Tipo de Ocupación</th>
-                <th>Estado</th>
-                <th>Cola</th>
                 <th>RND Complejidad</th>
                 <th>Complejidad</th>
                 <th>Tiempo de reparación</th>
+                <th>Estado</th>
+                <th>Cola</th>
                 <th>Fin Reparación</th>
                 <th>Tiempo de Ocupación</th>
                 <th>Relojes a Retirar</th>

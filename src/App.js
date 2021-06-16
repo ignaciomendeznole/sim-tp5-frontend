@@ -453,9 +453,9 @@ function App() {
           {simulacion !== null ? (
             <h2>
               Porcentaje de ocupacion del relojero:{" "}
-              {(simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
+              {((simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
                 simulacion[simulacion.length - 1].reloj) *
-                100}
+                100).toFixed(2)}
             </h2>
           ) : null}
         </Row>
@@ -464,9 +464,9 @@ function App() {
           {simulacion !== null ? (
             <h2>
               Porcentaje de ocupacion del ayudante:{" "}
-              {(simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
+              {((simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
                 simulacion[simulacion.length - 1].reloj) *
-                100}
+                100).toFixed(2)}
             </h2>
           ) : null}
         </Row>
@@ -475,9 +475,9 @@ function App() {
             <h2>
               Probabilidad de que un cliente vaya a retirar un reloj y todavía
               no esté listo:{" "}
-              {(simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
+              {((simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
                 simulacion[simulacion.length - 1].reloj) *
-                100}
+                100).toFixed(2)}
             </h2>
           ) : null}
         </Row>
@@ -486,104 +486,165 @@ function App() {
             <h1>SIMULACIÓN</h1>
           </Col>
 
-          <MuiThemeProvider theme={theme}></MuiThemeProvider>
-
-          <Table striped bordered hover variant="dark">
-            <thead style={{ position: "sticky" }}>
-              <tr>
-                <th colSpan={3}>EVENTOS</th>
-                <th colSpan={3}>LLEGADA CLIENTE</th>
-                <th colSpan={2}>ATENCIÓN</th>
-                <th colSpan={2}>DEMORA</th>
-                <th colSpan={5}>AYUDANTE</th>
-                <th colSpan={3}>REPARACIÓN RELOJES</th>
-                <th colSpan={4}>RELOJERO</th>
-                <th colSpan={1}>TIENDA</th>
-                <th colSpan={1}></th>
-                <th colSpan={cantClientesUnicos}>CLIENTES</th>
-              </tr>
-              <tr>
-                <th>Número Simulación</th>
-                <th>Evento</th>
-                <th>Reloj</th>
-                <th>RND Llegada</th>
-                <th>Tiempo Llegada</th>
-                <th>Próxima Llegada</th>
-                <th>RND Atencion</th>
-                <th>Atención</th>
-                <th>RND Demora</th>
-                <th>Demora</th>
-                <th>Estado</th>
-                <th>Cola</th>
-                <th>Fin Atención</th>
-                <th>Tiempo de Ocupación</th>
-                <th>Tipo de Ocupación</th>
-                <th>RND Complejidad</th>
-                <th>Complejidad</th>
-                <th>Tiempo de reparación</th>
-                <th>Estado</th>
-                <th>Cola</th>
-                <th>Fin Reparación</th>
-                <th>Tiempo de Ocupación</th>
-                <th>Relojes a Retirar</th>
-                <th>Próximo Evento</th>
-                {Array.from(setClientes).map((clientId, i) => (
-                  <th key={i}>{clientId}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {simulacion !== null
-                ? simulacion.map((simulation, i) => {
-                    //simulation.clientes.map((cliente, index) => {
-                    return (
-                      <tr
-                        key={i}
-                        onClick={() => setSelectedRow(i)}
-                        style={{
-                          backgroundColor:
-                            selectedRow === i ? "darkcyan" : null,
-                        }}
-                      >
-                        <td>{simulation.numeroSimulacion}</td>
-                        <td>{simulation.evento}</td>
-                        <td>{simulation.reloj}</td>
-                        <td>{simulation.llegada.random}</td>
-                        <td>{simulation.llegada.tiempoLlegada}</td>
-                        <td>{simulation.llegada.proximaLlegada}</td>
-                        <td>{simulation.atencion.random}</td>
-                        <td>{simulation.atencion.tipo}</td>
-                        <td>{simulation.demora.random}</td>
-                        <td>{simulation.demora.tiempoDemora}</td>
-                        <td>{simulation.ayudante.estado}</td>
-                        <td>{simulation.ayudante.cola}</td>
-                        <td>{simulation.ayudante.finAtencion}</td>
-                        <td>{simulation.ayudante.tiempoOcupacion}</td>
-                        <td>{simulation.ayudante.tipoOcupacion}</td>
-                        <td>{simulation.relojero.estado}</td>
-                        <td>{simulation.relojero.cola}</td>
-                        <td>{simulation.relojero.finAtencion}</td>
-                        <td>{simulation.relojero.tiempoOcupacion}</td>
-                        <td>{simulation.relojesRetirar}</td>
-                        <td>{simulation.proximoEvento}</td>
-                        {Array.from(setClientes).map((clientId, i) => (
-                          <td key={i}>
-                            {simulation.clientes.map((cliente) => {
-                              return cliente.id === clientId ? (
-                                <p>
-                                  ID: {cliente.id} Estado: {cliente.state.name}
-                                </p>
-                              ) : null;
-                            })}
+          <MuiThemeProvider theme={theme}>
+            <Table id="mapping_table" striped bordered hover variant="dark" >
+              <thead   >
+                <tr>
+                  <th colSpan={3}>EVENTOS</th>
+                  <th colSpan={3}>LLEGADA CLIENTE</th>
+                  <th colSpan={2}>ATENCIÓN</th>
+                  <th colSpan={2}>DEMORA</th>
+                  <th colSpan={5}>AYUDANTE</th>
+                  <th colSpan={3}>REPARACIÓN RELOJES</th>
+                  <th colSpan={4}>RELOJERO</th>
+                  <th colSpan={1}>TIENDA</th>
+                  <th colSpan={1}></th>
+                  <th colSpan={cantClientesUnicos}>CLIENTES</th>
+                </tr>
+                <tr>
+                  <th>Número Simulación</th>
+                  <th>Evento</th>
+                  <th>Reloj</th>
+                  <th>RND Llegada</th>
+                  <th>Tiempo Llegada</th>
+                  <th>Próxima Llegada</th>
+                  <th>RND Atencion</th>
+                  <th>Atención</th>
+                  <th>RND Demora</th>
+                  <th>Demora</th>
+                  <th>Estado</th>
+                  <th>Cola</th>
+                  <th>Fin Atención</th>
+                  <th>Tiempo de Ocupación</th>
+                  <th>Tipo de Ocupación</th>
+                  <th>RND Complejidad</th>
+                  <th>Complejidad</th>
+                  <th>Tiempo de reparación</th>
+                  <th>Estado</th>
+                  <th>Cola</th>
+                  <th>Fin Reparación</th>
+                  <th>Tiempo de Ocupación</th>
+                  <th>Relojes a Retirar</th>
+                  <th>Próximo Evento</th>
+                  {Array.from(setClientes).map((clientId, i) => (
+                    <th key={i}>{clientId}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {simulacion !== null
+                  ? simulacion.map((simulation, i) => {
+                      //simulation.clientes.map((cliente, index) => {
+                      return (
+                        <tr
+                          key={i}
+                          onClick={() => setSelectedRow(i)}
+                          style={{
+                            backgroundColor:
+                              selectedRow === i ? "darkcyan" : null,
+                          }}
+                        >
+                          <td>{simulation.numeroSimulacion}</td>
+                          <td>{simulation.evento}</td>
+                          <td>
+                            {simulation.reloj
+                              ? simulation.reloj.toFixed(2)
+                              : null}
                           </td>
-                        ))}
-                      </tr>
-                    );
-                    //});
-                  })
-                : null}
-            </tbody>
-          </Table>
+                          <td>
+                            {simulation.llegada.random
+                              ? simulation.llegada.random.toFixed(2)
+                              : null}
+                          </td>
+                          <td>
+                            {simulation.llegada.random
+                              ? simulation.llegada.tiempoLlegada.toFixed(2)
+                              : null}
+                          </td>
+                          <td>
+                            {simulation.llegada.proximaLlegada
+                              ? simulation.llegada.proximaLlegada.toFixed(2)
+                              : null}
+                          </td>
+                          <td>
+                            {simulation.atencion.random
+                              ? simulation.atencion.random.toFixed(2)
+                              : null}
+                          </td>
+                          <td>{simulation.atencion.tipo}</td>
+                          <td>
+                            {simulation.demora.tiempoDemora
+                              ? simulation.demora.tiempoDemora.toFixed(2)
+                              : null}
+                          </td>
+                          <td>
+                            {simulation.demora.random
+                              ? simulation.demora.random.toFixed(2)
+                              : null}
+                          </td>
+                          <td>{simulation.ayudante.estado}</td>
+                          <td>{simulation.ayudante.cola}</td>
+                          <td>
+                            {simulation.ayudante.finAtencion
+                              ? simulation.ayudante.finAtencion.toFixed(2)
+                              : null}
+                          </td>
+                          <td>
+                            {simulation.ayudante.tiempoOcupacion
+                              ? simulation.ayudante.tiempoOcupacion.toFixed(2)
+                              : null}
+                          </td>
+                          <td>{simulation.ayudante.tipoOcupacion}</td>
+                          
+                          <td>
+                            {simulation.randomComplejidad
+                              ? simulation.randomComplejidad.toFixed(2)
+                              : null}
+                          </td>
+                          <td>{simulation.complejidad}</td>
+
+                          <td>
+                            {simulation.demoraReparacion
+                              ? simulation.demoraReparacion.toFixed(2)
+                              : null}
+                          </td>
+
+                          <td>{simulation.relojero.estado}</td>
+                          <td>{simulation.relojero.cola}</td>
+                          <td>
+                            {simulation.relojero.finAtencion
+                              ? simulation.relojero.finAtencion.toFixed(2)
+                              : null}
+                          </td>
+                          <td>
+                            {simulation.relojero.tiempoOcupacion
+                              ? simulation.relojero.tiempoOcupacion.toFixed(2)
+                              : null}
+                          </td>
+                          <td>{simulation.relojesRetirar}</td>
+                          <td>{simulation.proximoEvento}</td>
+                          {Array.from(setClientes).map((clientId, i) => (
+                            <td key={i}>
+                              {simulation.clientes.map((cliente) => {
+                                return cliente.id === clientId ? (
+                                  <p>
+                                    ID: {cliente.id} Estado:{" "}
+                                    {cliente.state.name}
+                                  </p>
+                                ) : null;
+                              })}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                      //});
+                    })
+                  : null}
+              </tbody>
+            </Table>
+            
+
+          </MuiThemeProvider>
         </Row>
       </Container>
     </div>

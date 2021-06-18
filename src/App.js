@@ -1,13 +1,24 @@
-import './App.css';
-import { Form, Button, Container, Row, Col, Table } from 'react-bootstrap';
-import axios from 'axios';
-import { useState } from 'react';
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import "./App.css";
+import { Form, Button, Container, Row, Col, Table } from "react-bootstrap";
+import axios from "axios";
+import { useState } from "react";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
+
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+import Paper from "@material-ui/core/Paper";
+import { Table as MaterialTable } from "@material-ui/core";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 
 function App() {
   const theme = createMuiTheme({
     palette: {
-      type: 'dark',
+      type: "dark",
     },
   });
   const [simulacionData, setSimulacionData] = useState({
@@ -54,7 +65,7 @@ function App() {
   };
 
   const fetchInformation = async () => {
-    const BASE_URL = 'http://localhost:5000';
+    const BASE_URL = "http://localhost:5000";
     try {
       let {
         initTime,
@@ -137,7 +148,7 @@ function App() {
       isNaN(Number.parseFloat(initTime)) ||
       isNaN(Number.parseFloat(integrationStep))
     ) {
-      return { validForm: false, errorMessage: 'Campos invalidos ' };
+      return { validForm: false, errorMessage: "Campos invalidos " };
     }
 
     // if (Number.parseFloat(relojDesde) > Number.parseFloat(relojHasta)) {
@@ -150,24 +161,24 @@ function App() {
     if (Number.parseFloat(initTime) > Number.parseFloat(ultimoReloj))
       return {
         validForm: false,
-        errorMessage: 'El inicio de la simulacion debe ser menor que el fin',
+        errorMessage: "El inicio de la simulacion debe ser menor que el fin",
       };
 
     if (Number.parseFloat(repUniformeA) > Number.parseFloat(repUniformeB))
       return {
         validForm: false,
-        errorMessage: 'En las distribuciones uniformes, A debe ser menor a B',
+        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
       };
 
     if (Number.parseFloat(ventaUniformeA) > Number.parseFloat(ventaUniformeB))
       return {
         validForm: false,
-        errorMessage: 'En las distribuciones uniformes, A debe ser menor a B',
+        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
       };
     if (Number.parseFloat(llegadaClienteA) > Number.parseFloat(llegadaClienteB))
       return {
         validForm: false,
-        errorMessage: 'En las distribuciones uniformes, A debe ser menor a B',
+        errorMessage: "En las distribuciones uniformes, A debe ser menor a B",
       };
 
     if (
@@ -178,7 +189,7 @@ function App() {
     ) {
       return {
         validForm: false,
-        errorMessage: 'La suma de las probabilidades debe ser 100%',
+        errorMessage: "La suma de las probabilidades debe ser 100%",
       };
     }
 
@@ -193,29 +204,93 @@ function App() {
     return fetchInformation();
   };
 
+  const EulerSwal = withReactContent(Swal);
+
+  const triggerEulerSwal = (euler, data) => {
+    const columns = [
+      { id: "valor_t", label: "t", minWidth: 50 },
+      { id: "valor_D", label: "D", minWidth: 50 },
+      { id: "derivada", label: "dD/dt", minWidth: 50 },
+      { id: "t_masuno", label: "t(i+1)", minWidth: 50 },
+      { id: "D_masuno", label: "D(i+1)", minWidth: 50 },
+    ];
+
+    EulerSwal.fire(
+      <>
+        <p>Aproximación por Euler</p>
+        <p>
+          dD/dt = 0.4*{data.complejidad} + t +{" "}
+          {simulacionData.fixSpeedValue} * {data.relojero.cola + 1}
+        </p>
+        <Paper>
+          <TableContainer style={{ maxHeight: "50vh" }}>
+            <MaterialTable
+              stickyHeader
+              aria-label="sticky table"
+              style={{ overflow: "scroll" }}
+            >
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {euler.map((row, index) => {
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {value
+                              ? value.toFixed(2)
+                              : value === 0
+                              ? "0"
+                              : null}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </MaterialTable>
+          </TableContainer>
+        </Paper>
+      </>
+    );
+  };
   return (
-    <div className='App'>
+    <div className="App">
       <Container fluid>
         <Row>
           <Col>
             <h1>Simulación de Modelos Dinámicos: Colas</h1>
           </Col>
         </Row>
-        <p style={{ color: 'red' }}>
+        <p style={{ color: "red" }}>
           ¡Debes completar todos los campos para comenzar la simulación!
         </p>
 
-        <div className='input-fields'>
+        <div className="input-fields">
           <Row>
             <Form>
               <Form.Group>
                 <Form.Label>Reloj de inicialización (minutos)</Form.Label>
                 <Form.Control
-                  type='text'
-                  placeholder='Ingresar inicio de la simulacion'
-                  className='simulation-input'
+                  type="text"
+                  placeholder="Ingresar inicio de la simulacion"
+                  className="simulation-input"
                   value={simulacionData.initTime}
-                  name='initTime'
+                  name="initTime"
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -229,11 +304,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Mostrar Reloj desde (minutos):</Form.Label>
                 <Form.Control
-                  type='text'
-                  placeholder='Ingresar Reloj de inicio'
-                  className='simulation-input'
+                  type="text"
+                  placeholder="Ingresar Reloj de inicio"
+                  className="simulation-input"
                   value={simulacionData.relojDesde}
-                  name='relojDesde'
+                  name="relojDesde"
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -244,11 +319,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Fin de la simulación</Form.Label>
                 <Form.Control
-                  type='text'
-                  placeholder='Ingresar fin de la simulacion'
-                  className='simulation-input'
+                  type="text"
+                  placeholder="Ingresar fin de la simulacion"
+                  className="simulation-input"
                   value={simulacionData.ultimoReloj}
-                  name='ultimoReloj'
+                  name="ultimoReloj"
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -259,11 +334,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Iteraciones a mostrar:</Form.Label>
                 <Form.Control
-                  type='text'
-                  placeholder='Ingresar Reloj de fin'
-                  className='simulation-input'
+                  type="text"
+                  placeholder="Ingresar Reloj de fin"
+                  className="simulation-input"
                   value={simulacionData.relojHasta}
-                  name='relojHasta'
+                  name="relojHasta"
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -274,11 +349,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Constante de reparación de relojes "A"</Form.Label>
                 <Form.Control
-                  type='text'
-                  placeholder='Ingresar valor de constante de reparación'
-                  className='simulation-input'
+                  type="text"
+                  placeholder="Ingresar valor de constante de reparación"
+                  className="simulation-input"
                   value={simulacionData.fixSpeedValue}
-                  name='fixSpeedValue'
+                  name="fixSpeedValue"
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -289,11 +364,11 @@ function App() {
               <Form.Group>
                 <Form.Label>Paso de Integración "h"</Form.Label>
                 <Form.Control
-                  type='text'
-                  placeholder='Ingresar valor del paso de integración'
-                  className='simulation-input'
+                  type="text"
+                  placeholder="Ingresar valor del paso de integración"
+                  className="simulation-input"
                   value={simulacionData.integrationStep}
-                  name='integrationStep'
+                  name="integrationStep"
                   onChange={updateForm}
                 />
               </Form.Group>
@@ -302,9 +377,9 @@ function App() {
         </div>
 
         <Row>
-          <Col lg='14'>
+          <Col lg="14">
             <h1>Distribuciones</h1>
-            <Table striped bordered hover variant='dark' size='sm'>
+            <Table striped bordered hover variant="dark" size="sm">
               <thead>
                 <tr>
                   <th>Distribuciones</th>
@@ -315,18 +390,18 @@ function App() {
                 <tr>
                   <td>Llegada Clientes</td>
                   <td>
-                    Distribución Uniforme entre{' '}
+                    Distribución Uniforme entre{" "}
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.llegadaClienteA}
-                      name='llegadaClienteA'
+                      name="llegadaClienteA"
                       onChange={updateForm}
-                    ></input>{' '}
-                    y{' '}
+                    ></input>{" "}
+                    y{" "}
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.llegadaClienteB}
-                      name='llegadaClienteB'
+                      name="llegadaClienteB"
                       onChange={updateForm}
                     />
                     minutos
@@ -335,18 +410,18 @@ function App() {
                 <tr>
                   <td>Tiempo de atención (para venta)</td>
                   <td>
-                    Distribución Uniforme entre{' '}
+                    Distribución Uniforme entre{" "}
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.ventaUniformeA}
-                      name='ventaUniformeA'
+                      name="ventaUniformeA"
                       onChange={updateForm}
-                    ></input>{' '}
-                    y{' '}
+                    ></input>{" "}
+                    y{" "}
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.ventaUniformeB}
-                      name='ventaUniformeB'
+                      name="ventaUniformeB"
                       onChange={updateForm}
                     />
                     minutos
@@ -355,18 +430,18 @@ function App() {
                 <tr>
                   <td>Tiempo de reparación de relojes</td>
                   <td>
-                    Distribución Uniforme entre{' '}
+                    Distribución Uniforme entre{" "}
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.repUniformeA}
-                      name='repUniformeA'
+                      name="repUniformeA"
                       onChange={updateForm}
-                    ></input>{' '}
-                    y{' '}
+                    ></input>{" "}
+                    y{" "}
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.repUniformeB}
-                      name='repUniformeB'
+                      name="repUniformeB"
                       onChange={updateForm}
                     />
                     minutos
@@ -380,9 +455,9 @@ function App() {
             </Table>
           </Col>
 
-          <Col xs lg='4'>
+          <Col xs lg="4">
             <h1>Probabilidades</h1>
-            <Table striped bordered hover variant='dark' size='sm'>
+            <Table striped bordered hover variant="dark" size="sm">
               <thead>
                 <tr>
                   <th>Tipo de Atención</th>
@@ -394,12 +469,12 @@ function App() {
                   <td>Comprar</td>
                   <td>
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.probabilidadComprar}
-                      name='probabilidadComprar'
+                      name="probabilidadComprar"
                       onChange={updateForm}
-                      placeholder='Ingrese la probabilidad de que un cliente compre un reloj'
-                    />{' '}
+                      placeholder="Ingrese la probabilidad de que un cliente compre un reloj"
+                    />{" "}
                     %
                   </td>
                 </tr>
@@ -407,12 +482,12 @@ function App() {
                   <td>Reparar</td>
                   <td>
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.probabilidadReparar}
-                      name='probabilidadReparar'
+                      name="probabilidadReparar"
                       onChange={updateForm}
-                      placeholder='Ingrese la probabilidad de que un cliente repare un reloj'
-                    />{' '}
+                      placeholder="Ingrese la probabilidad de que un cliente repare un reloj"
+                    />{" "}
                     %
                   </td>
                 </tr>
@@ -420,12 +495,12 @@ function App() {
                   <td>Retirar relojes</td>
                   <td>
                     <input
-                      type='text'
+                      type="text"
                       value={simulacionData.probabilidadRetirar}
-                      name='probabilidadRetirar'
+                      name="probabilidadRetirar"
                       onChange={updateForm}
-                      placeholder='Ingrese la probabilidad de que un cliente retire un reloj'
-                    />{' '}
+                      placeholder="Ingrese la probabilidad de que un cliente retire un reloj"
+                    />{" "}
                     %
                   </td>
                 </tr>
@@ -441,33 +516,37 @@ function App() {
         <p>EEA: En espera atencion</p>
 
         <Button
-          variant='primary'
-          className='simulate-btn'
+          variant="primary"
+          className="simulate-btn"
           onClick={startSimulation}
         >
           SIMULAR
         </Button>
 
         <br />
-        <Row style={{ marginLeft: '5px' }}>
+        <Row style={{ marginLeft: "5px" }}>
           {simulacion !== null ? (
             <h2>
               Porcentaje de ocupacion del relojero:{" "}
-              {((simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
-                simulacion[simulacion.length - 1].reloj) *
-                100).toFixed(2)}
-            </h2>
+              {(
+                (simulacion[simulacion.length - 1].relojero.tiempoOcupacion /
+                  simulacion[simulacion.length - 1].reloj) *
+                100
+              ).toFixed(2)}
+            %</h2>
           ) : null}
         </Row>
 
-        <Row style={{ marginLeft: '5px' }}>
+        <Row style={{ marginLeft: "5px" }}>
           {simulacion !== null ? (
             <h2>
               Porcentaje de ocupacion del ayudante:{" "}
-              {((simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
-                simulacion[simulacion.length - 1].reloj) *
-                100).toFixed(2)}
-            </h2>
+              {(
+                (simulacion[simulacion.length - 1].ayudante.tiempoOcupacion /
+                  simulacion[simulacion.length - 1].reloj) *
+                100
+              ).toFixed(2)}
+            %</h2> 
           ) : null}
         </Row>
         {/* <Row style={{ marginLeft: '5px' }}>
@@ -487,9 +566,10 @@ function App() {
           </Col>
 
           <MuiThemeProvider theme={theme}>
-            <Table id="mapping_table" striped bordered hover variant="dark" >
-              <thead   >
-                <tr>
+            <div>
+            <Table id="mapping_table" striped bordered hover variant="dark">
+              <thead >
+                <tr className="sticky-header1">
                   <th colSpan={3}>EVENTOS</th>
                   <th colSpan={3}>LLEGADA CLIENTE</th>
                   <th colSpan={2}>ATENCIÓN</th>
@@ -497,12 +577,12 @@ function App() {
                   <th colSpan={5}>AYUDANTE</th>
                   <th colSpan={3}>REPARACIÓN RELOJES</th>
                   <th colSpan={4}>RELOJERO</th>
-                  <th colSpan={1}>TIENDA</th>
+                  <th colSpan={2}>TIENDA</th>
                   <th colSpan={1}></th>
                   <th colSpan={cantClientesUnicos}>CLIENTES</th>
                 </tr>
-                <tr>
-                  <th>Número Simulación</th>
+                <tr className="sticky-header2">
+                  <th >Número Simulación</th>
                   <th>Evento</th>
                   <th>Reloj</th>
                   <th>RND Llegada</th>
@@ -520,6 +600,7 @@ function App() {
                   <th>RND Complejidad</th>
                   <th>Complejidad</th>
                   <th>Tiempo de reparación</th>
+                  <th>Euler</th>
                   <th>Estado</th>
                   <th>Cola</th>
                   <th>Fin Reparación</th>
@@ -533,15 +614,14 @@ function App() {
               </thead>
               <tbody>
                 {simulacion !== null
-                  ? simulacion.map((simulation, i) => {
-                      //simulation.clientes.map((cliente, index) => {
+                  ? simulacion.map((simulation, index) => {
                       return (
                         <tr
-                          key={i}
-                          onClick={() => setSelectedRow(i)}
+                          key={index}
+                          onClick={() => setSelectedRow(index)}
                           style={{
                             backgroundColor:
-                              selectedRow === i ? "darkcyan" : null,
+                              selectedRow === index ? "darkcyan" : null,
                           }}
                         >
                           <td>{simulation.numeroSimulacion}</td>
@@ -573,15 +653,16 @@ function App() {
                           </td>
                           <td>{simulation.atencion.tipo}</td>
                           <td>
-                            {simulation.demora.tiempoDemora
-                              ? simulation.demora.tiempoDemora.toFixed(2)
-                              : null}
-                          </td>
-                          <td>
                             {simulation.demora.random
                               ? simulation.demora.random.toFixed(2)
                               : null}
                           </td>
+                          <td>
+                            {simulation.demora.tiempoDemora
+                              ? simulation.demora.tiempoDemora.toFixed(2)
+                              : null}
+                          </td>
+
                           <td>{simulation.ayudante.estado}</td>
                           <td>{simulation.ayudante.cola}</td>
                           <td>
@@ -595,7 +676,7 @@ function App() {
                               : null}
                           </td>
                           <td>{simulation.ayudante.tipoOcupacion}</td>
-                          
+
                           <td>
                             {simulation.randomComplejidad
                               ? simulation.randomComplejidad.toFixed(2)
@@ -608,7 +689,20 @@ function App() {
                               ? simulation.demoraReparacion.toFixed(2)
                               : null}
                           </td>
-
+                          <td>
+                            {simulation.euler ? (
+                              <Button
+                                onClick={() => {
+                                  triggerEulerSwal(
+                                    simulation.euler,
+                                    simulation
+                                  );
+                                }}
+                              >
+                                Ver
+                              </Button>
+                            ) : null}
+                          </td>
                           <td>{simulation.relojero.estado}</td>
                           <td>{simulation.relojero.cola}</td>
                           <td>
@@ -642,8 +736,7 @@ function App() {
                   : null}
               </tbody>
             </Table>
-            
-
+            </div>
           </MuiThemeProvider>
         </Row>
       </Container>
